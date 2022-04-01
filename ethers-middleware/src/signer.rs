@@ -244,8 +244,11 @@ where
         // fill any missing fields
         self.fill_transaction(&mut tx, block).await?;
 
+        println!("{}", serde_json::to_string(&tx)?);
+
         // If the from address is set and is not our signer, delegate to inner
         if tx.from().is_some() && tx.from() != Some(&self.address()) {
+            println!("inner send_transaction");
             return self
                 .inner
                 .send_transaction(tx, block)
@@ -256,6 +259,7 @@ where
         // if we have a nonce manager set, we should try handling the result in
         // case there was a nonce mismatch
         let signed_tx = self.sign_transaction(tx).await?;
+        println!("inner send_raw_transaction");
 
         // Submit the raw transaction
         self.inner
